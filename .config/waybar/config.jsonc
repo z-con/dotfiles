@@ -41,7 +41,7 @@
     }
   },
   "custom/omarchy": {
-    "format": "<s> \uf179 </s>",
+    "format": "\uf179",
     "on-click": "omarchy-menu",
     "on-click-right": "xdg-terminal-exec",
     "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space"
