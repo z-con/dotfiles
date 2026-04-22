@@ -20,9 +20,9 @@ rsync_cfg waybar/
 rsync_cfg mako/
 rsync_cfg walker/
 rsync_cfg omarchy/ \
+  --exclude='.git' \
   --exclude='current' \
   --exclude='themed/' \
-  --exclude='themes/*/.git' \
   --exclude='backgrounds/*.png' \
   --exclude='backgrounds/*.jpg' \
   --exclude='backgrounds/*.jpeg' \
