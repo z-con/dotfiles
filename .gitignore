@@ -1,0 +1,19 @@
+# Omarchy auto-generated / large files
+.config/omarchy/current
+.config/omarchy/themed/
+.config/omarchy/backgrounds/*.png
+.config/omarchy/backgrounds/*.jpg
+.config/omarchy/backgrounds/*.jpeg
+.config/omarchy/backgrounds/*.webp
+
+# Secrets / tokens
+**/secret*
+**/*token*
+**/*credentials*
+**/*.key
+**/*.pem
+
+# Cache / build artifacts
+**/__pycache__/
+**/*.pyc
+**/.cache/

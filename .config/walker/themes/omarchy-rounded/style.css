@@ -1,0 +1,13 @@
+@import "/home/zach/.local/share/omarchy/default/walker/themes/omarchy-default/style.css";
+
+* {
+  font-weight: 100;
+}
+
+.box-wrapper {
+  border-radius: 15px;
+}
+
+.search-container {
+  background: transparent;
+}
