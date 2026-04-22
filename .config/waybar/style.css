@@ -33,10 +33,14 @@
 #cpu,
 #battery,
 #pulseaudio,
-#omarchy,
+#custom-omarchy,
 #custom-update {
   min-width: 12px;
   margin: 0 7.5px;
+}
+
+#custom-omarchy {
+  font-size: 18px;
 }
 
 #tray {
