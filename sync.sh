@@ -22,6 +22,7 @@ rsync_cfg walker/
 rsync_cfg omarchy/ \
   --exclude='current' \
   --exclude='themed/' \
+  --exclude='themes/*/.git' \
   --exclude='backgrounds/*.png' \
   --exclude='backgrounds/*.jpg' \
   --exclude='backgrounds/*.jpeg' \
