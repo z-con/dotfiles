@@ -54,5 +54,10 @@ fi
 
 git add -A
 git commit -m "Update dotfiles [$(date '+%Y-%m-%d %H:%M')]"
-git push
-echo "dotfiles: committed and pushed"
+
+if git remote get-url origin &>/dev/null; then
+  git push
+  echo "dotfiles: committed and pushed"
+else
+  echo "dotfiles: committed locally (no remote configured)"
+fi
