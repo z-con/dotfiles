@@ -255,6 +255,16 @@ def main():
         print_range(args[1], args[2])
         return
 
+    if len(args) == 1 and args[0] == "--all":
+        for start, end in [
+            ("E000", "E00A"), ("E0A0", "E0D4"), ("E200", "E2A9"),
+            ("E300", "E3EB"), ("E700", "E7C5"), ("EA60", "EBEB"),
+            ("EE00", "EE0B"), ("F000", "F2E0"), ("F300", "F32F"),
+            ("F400", "F532"), ("F500", "FD46"),
+        ]:
+            print_range(start, end)
+        return
+
     if len(args) == 1 and args[0] == "--ranges":
         print("\n  Known Nerd Font ranges:\n")
         ranges = [
@@ -296,6 +306,7 @@ def main():
         print("    glyphs <term>                search by name")
         print("    glyphs --range EA60 EBEB     scan a unicode range")
         print("    glyphs --ranges              list all known ranges")
+        print("    glyphs --all                 print every glyph in every range")
         for name, glyphs in categories.items():
             print_category(name, glyphs)
 
