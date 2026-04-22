@@ -230,8 +230,53 @@ def print_category(name, glyphs):
         print(line)
 
 
+def print_range(start_hex, end_hex):
+    start = int(start_hex, 16)
+    end = int(end_hex, 16)
+    glyphs = [(code, f"U+{code:05X}") for code in range(start, end + 1)]
+    print(f"\n  Range U+{start:04X} – U+{end:04X}  ({len(glyphs)} glyphs)\n")
+    rows = [glyphs[i:i+COLS] for i in range(0, len(glyphs), COLS)]
+    for row in rows:
+        line = "  "
+        for code, label in row:
+            try:
+                cell = f"{chr(code)}  {label:<12}"
+            except (ValueError, OverflowError):
+                cell = f"?  {label:<12}"
+            line += cell
+        print(line)
+    print()
+
+
 def main():
-    query = sys.argv[1].lower() if len(sys.argv) > 1 else None
+    args = sys.argv[1:]
+
+    if len(args) == 3 and args[0] == "--range":
+        print_range(args[1], args[2])
+        return
+
+    if len(args) == 1 and args[0] == "--ranges":
+        print("\n  Known Nerd Font ranges:\n")
+        ranges = [
+            ("E000", "E00A", "Pomicons"),
+            ("E0A0", "E0D4", "Powerline Extra"),
+            ("E200", "E2A9", "Weather Icons"),
+            ("E300", "E3EB", "Weather Icons (extended)"),
+            ("E700", "E7C5", "Devicons"),
+            ("EA60", "EBEB", "Codicons (VS Code)"),
+            ("EE00", "EE0B", "Nerd Fonts logos"),
+            ("F000", "F2E0", "Font Awesome"),
+            ("F300", "F32F", "Font Logos (OS)"),
+            ("F400", "F532", "Octicons"),
+            ("F500", "FD46", "Font Awesome v5"),
+        ]
+        for start, end, name in ranges:
+            count = int(end, 16) - int(start, 16) + 1
+            print(f"  glyphs --range {start} {end}   {name}  ({count})")
+        print()
+        return
+
+    query = args[0].lower() if args else None
 
     if query:
         print(f"\n  Search: '{query}'\n")
@@ -246,7 +291,11 @@ def main():
             print("  No matches found.")
     else:
         print("\n  Nerd Font Glyph Browser  —  JetBrainsMono Nerd Font")
-        print("  Usage: glyphs [search term]   e.g.  glyphs arrow")
+        print("  Usage:")
+        print("    glyphs                       show curated list")
+        print("    glyphs <term>                search by name")
+        print("    glyphs --range EA60 EBEB     scan a unicode range")
+        print("    glyphs --ranges              list all known ranges")
         for name, glyphs in categories.items():
             print_category(name, glyphs)
 
