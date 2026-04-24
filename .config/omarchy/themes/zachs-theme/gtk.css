@@ -122,15 +122,30 @@ listview row:selected:focus {
     color: @background;
 }
 
-button.suggested-action {
-    background-color: @border_pink;
-    color: @background;
-    border-color: @border_pink;
+/* Text selection highlight color */
+entry > text > selection,
+text > selection,
+entry selection,
+selection {
+    background-color: @border_pink !important;
+    color: @background !important;
 }
 
-button.suggested-action:hover {
-    background-color: @bright_magenta;
-    color: @background;
+button.suggested-action,
+headerbar button.suggested-action,
+.titlebar button.suggested-action {
+    background: @border_pink !important;
+    background-color: @border_pink !important;
+    color: @background !important;
+    border-color: @border_pink !important;
+}
+
+button.suggested-action:hover,
+headerbar button.suggested-action:hover,
+.titlebar button.suggested-action:hover {
+    background: @bright_magenta !important;
+    background-color: @bright_magenta !important;
+    color: @background !important;
 }
 
 /* GtkMessageDialog styling */
@@ -228,6 +243,13 @@ popover.emoji-picker > contents > box {
 /* Sharp corners, Hyprland-inspired */
 * {
     border-radius: 0;
+}
+
+/* Restore rounding on suggested-action buttons after global reset */
+button.suggested-action,
+headerbar button.suggested-action,
+.titlebar button.suggested-action {
+    border-radius: 6px;
 }
 
 /*
