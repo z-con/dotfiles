@@ -12,9 +12,9 @@
 #                                                         
 
 # Accent and UI colors
-accent = "#26bbd9"
-active_border_color = "#3fc4de"
-active_tab_background = "#26bbd9"
+accent = "#ff69b4"
+active_border_color = "#ff69b4"
+active_tab_background = "#ee64ac"
 
 # Cursor colors
 cursor = "#fadad1"
@@ -25,7 +25,7 @@ background = "#1c1e26"
 
 # Selection colors
 selection_foreground = "#1c1e26"
-selection_background = "#26bbd9"
+selection_background = "#ee64ac"
 
 # Normal colors (ANSI 0-7)
 color0 = "#1c1e26"

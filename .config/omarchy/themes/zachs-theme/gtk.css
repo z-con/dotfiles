@@ -108,6 +108,31 @@
 @define-color content_view_bg @black;
 @define-color text_view_bg @black;
 
+/* Force pink accent for sidebar selections and suggested-action buttons */
+placessidebar row:selected,
+placessidebar row:selected:focus,
+placessidebar row:hover:selected {
+    background-color: @border_pink;
+    color: @background;
+}
+
+listview row:selected,
+listview row:selected:focus {
+    background-color: @border_pink;
+    color: @background;
+}
+
+button.suggested-action {
+    background-color: @border_pink;
+    color: @background;
+    border-color: @border_pink;
+}
+
+button.suggested-action:hover {
+    background-color: @bright_magenta;
+    color: @background;
+}
+
 /* GtkMessageDialog styling */
 /* Target the entire dialog's background */
 messagedialog {
@@ -136,7 +161,8 @@ messagedialog button {
 }
 
 messagedialog button:hover {
-    background-color: @blue;
+    background-color: @border_pink;
+    color: @background;
 }
 
 banner revealer widget {
