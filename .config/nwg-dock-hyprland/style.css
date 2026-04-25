@@ -1,14 +1,12 @@
 window {
-  background: transparent;
+  background: rgba(28, 30, 38, 0.88);
+  border-radius: 15px;
   border-style: none;
 }
 
 #box {
-  background: rgba(28, 30, 38, 0.88);
+  background: transparent;
   border-radius: 15px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgba(255, 105, 180, 0.18);
   padding: 8px 6px;
 }
 
