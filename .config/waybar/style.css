@@ -41,8 +41,9 @@
 
 #custom-omarchy {
   font-size: 16px;
-  padding: 0;
+  padding: 0 0 0 6px;
   margin: 0;
+  margin-top: -2px;
 }
 
 #tray {
