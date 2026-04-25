@@ -14,7 +14,7 @@
     "pulseaudio",
     "cpu",
     "battery",
-    "clock"
+    "custom/clock"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -62,10 +62,9 @@
     "on-click": "omarchy-launch-or-focus-tui btop",
     "on-click-right": "alacritty"
   },
-  "clock": {
-    "format": "{:L%a %b %d %I:%M %p}",
-    "format-alt": "{:L%d %B W%V %Y}",
-    "tooltip": false,
+  "custom/clock": {
+    "exec": "date '+%a %b %-d %-I:%M %p'",
+    "interval": 30,
     "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
   },
   "network": {
