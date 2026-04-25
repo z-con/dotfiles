@@ -28,6 +28,9 @@ rsync_cfg omarchy/ \
   --exclude='backgrounds/*.jpeg' \
   --exclude='backgrounds/*.webp'
 
+# Dock
+rsync_cfg nwg-dock-hyprland/
+
 # Terminals
 rsync_cfg alacritty/
 rsync_cfg kitty/
