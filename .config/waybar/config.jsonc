@@ -6,14 +6,15 @@
   "height": 31,
   "margin": "10px 10px 0px 10px",
   "modules-left": ["custom/omarchy", "hyprland/workspaces"],
-  "modules-center": ["clock", "custom/update", "custom/voxtype", "custom/screenrecording-indicator", "custom/idle-indicator", "custom/notification-silencing-indicator"],
+  "modules-center": ["custom/update", "custom/voxtype", "custom/screenrecording-indicator", "custom/idle-indicator", "custom/notification-silencing-indicator"],
   "modules-right": [
     "group/tray-expander",
     "bluetooth",
     "network",
     "pulseaudio",
     "cpu",
-    "battery"
+    "battery",
+    "clock"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -41,7 +42,7 @@
     }
   },
   "custom/omarchy": {
-    "format": " ",
+    "format": " ",
     "on-click": "omarchy-menu",
     "on-click-right": "xdg-terminal-exec",
     "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space"
