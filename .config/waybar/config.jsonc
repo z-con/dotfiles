@@ -6,15 +6,14 @@
   "height": 31,
   "margin": "10px 10px 0px 10px",
   "modules-left": ["custom/omarchy", "hyprland/workspaces"],
-  "modules-center": ["custom/update", "custom/voxtype", "custom/screenrecording-indicator", "custom/idle-indicator", "custom/notification-silencing-indicator"],
+  "modules-center": ["custom/update", "custom/voxtype", "custom/screenrecording-indicator", "custom/idle-indicator", "custom/notification-silencing-indicator", "custom/clock"],
   "modules-right": [
     "group/tray-expander",
     "bluetooth",
     "network",
     "pulseaudio",
     "cpu",
-    "battery",
-    "custom/clock"
+    "battery"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
