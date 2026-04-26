@@ -2,20 +2,26 @@
 # When an external monitor is connected, move workspaces 6-10 to it.
 # When it's disconnected, Hyprland automatically moves those workspaces back to eDP-1.
 
+LOG=/tmp/ext-monitor-workspaces.log
+
+log() { echo "[$(date '+%H:%M:%S')] $*" >> "$LOG"; }
+
 move_workspaces() {
   local MONITOR="$1"
+  log "move_workspaces called for: '$MONITOR'"
   sleep 1
 
   local PREV_WS
   PREV_WS=$(hyprctl activeworkspace -j | jq '.id')
+  log "PREV_WS=$PREV_WS"
 
   for ws in 6 7 8 9 10; do
-    hyprctl dispatch moveworkspacetomonitor "$ws $MONITOR"
+    RESULT=$(hyprctl dispatch moveworkspacetomonitor "$ws $MONITOR" 2>&1)
+    log "moveworkspacetomonitor $ws $MONITOR -> $RESULT"
   done
 
-  # Hyprland auto-creates a new workspace (e.g. 11) for the new monitor before we can
-  # claim it. Switch to workspace 6 to land on the correct workspace, then return focus.
   sleep 0.5
+  log "dispatching workspace 6"
   hyprctl dispatch workspace 6
   hyprctl dispatch workspace "$PREV_WS"
 }
@@ -23,6 +29,7 @@ move_workspaces() {
 handle() {
   if echo "$1" | grep -q "^monitoradded>>"; then
     MONITOR=${1#monitoradded>>}
+    log "monitoradded event: '$MONITOR'"
     if [ "$MONITOR" != "eDP-1" ]; then
       move_workspaces "$MONITOR"
     fi
