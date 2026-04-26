@@ -15,14 +15,14 @@ move_workspaces() {
   PREV_WS=$(hyprctl activeworkspace -j | jq '.id')
   log "PREV_WS=$PREV_WS"
 
-  for ws in 6 7 8 9 10; do
+  for ws in 5 6 7 8; do
     RESULT=$(hyprctl dispatch moveworkspacetomonitor "$ws $MONITOR" 2>&1)
     log "moveworkspacetomonitor $ws $MONITOR -> $RESULT"
   done
 
   sleep 0.5
-  log "dispatching workspace 6"
-  hyprctl dispatch workspace 6
+  log "dispatching workspace 5"
+  hyprctl dispatch workspace 5
   hyprctl dispatch workspace "$PREV_WS"
 }
 
