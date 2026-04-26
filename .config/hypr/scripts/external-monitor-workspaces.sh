@@ -5,14 +5,18 @@
 move_workspaces() {
   local MONITOR="$1"
   sleep 1
+
+  local PREV_WS
+  PREV_WS=$(hyprctl activeworkspace -j | jq '.id')
+
   for ws in 6 7 8 9 10; do
     hyprctl dispatch moveworkspacetomonitor "$ws" "$MONITOR"
   done
-  # Hyprland creates a new workspace (e.g. 11) for the monitor before we can move 6-10 over.
-  # Switch the external monitor to workspace 6 to get off that auto-created workspace.
-  hyprctl dispatch focusmonitor "$MONITOR"
-  hyprctl dispatch workspace 6
-  hyprctl dispatch focusmonitor eDP-1
+
+  # Hyprland auto-creates a new workspace for the monitor before we can claim it.
+  # Atomically: focus external → switch to 6 → return focus to laptop.
+  sleep 0.5
+  hyprctl --batch "dispatch focusmonitor $MONITOR ; dispatch workspace 6 ; dispatch focusmonitor eDP-1 ; dispatch workspace $PREV_WS"
 }
 
 handle() {
