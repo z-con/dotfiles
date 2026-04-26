@@ -35,7 +35,7 @@
     "persistent-workspaces": {}
   },
   "custom/omarchy": {
-    "format": " ",
+    "format": " ",
     "on-click": "omarchy-menu",
     "on-click-right": "xdg-terminal-exec",
     "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space"
