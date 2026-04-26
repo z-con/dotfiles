@@ -6,11 +6,9 @@ DIRECTION=$1
 CURRENT=$(hyprctl activeworkspace -j | jq '.id')
 MONITOR=$(hyprctl activeworkspace -j | jq -r '.monitor')
 
-if [[ "$MONITOR" == "eDP-1" ]]; then
-    MIN=1; MAX=5
-else
-    MIN=6; MAX=10
-fi
+WORKSPACES=$(hyprctl workspaces -j | jq "[.[] | select(.monitor == \"$MONITOR\") | .id] | sort")
+MIN=$(echo "$WORKSPACES" | jq '.[0]')
+MAX=$(echo "$WORKSPACES" | jq '.[-1]')
 
 if [[ "$DIRECTION" == "next" && $CURRENT -lt $MAX ]]; then
     hyprctl dispatch workspace $((CURRENT + 1))
