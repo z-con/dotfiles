@@ -45,13 +45,38 @@ resize_two_windows() {
   local dir="$1" left_w="$2" right_w="$3"
   local min_each=$(( (left_w + right_w) / 4 ))
 
+  echo "[$(date +%T.%N)] dir=$dir left=$left_w right=$right_w min=$min_each" >> /tmp/resize-debug.log
+
   case "$dir" in
-    left)  [ $((left_w  - AMOUNT)) -ge $min_each ] && hyprctl dispatch resizeactive -${AMOUNT} 0 ;;
-    right) [ $((right_w - AMOUNT)) -ge $min_each ] && hyprctl dispatch resizeactive  ${AMOUNT} 0 ;;
+    left)
+      if [ $((left_w - AMOUNT)) -ge $min_each ]; then
+        hyprctl dispatch resizeactive -${AMOUNT} 0
+        echo "  → resized (left shrink)" >> /tmp/resize-debug.log
+      else
+        echo "  → BLOCKED (left would hit $((left_w - AMOUNT)) < $min_each)" >> /tmp/resize-debug.log
+      fi
+      ;;
+    right)
+      if [ $((right_w - AMOUNT)) -ge $min_each ]; then
+        hyprctl dispatch resizeactive ${AMOUNT} 0
+        echo "  → resized (right shrink)" >> /tmp/resize-debug.log
+      else
+        echo "  → BLOCKED (right would hit $((right_w - AMOUNT)) < $min_each)" >> /tmp/resize-debug.log
+      fi
+      ;;
   esac
+
+  # Log actual sizes after resize
+  local after
+  after=$(hyprctl clients -j | jq --argjson ws "$WS_ID" \
+    '[.[] | select(.workspace.id == $ws and .floating == false)] | sort_by(.at[0]) | map(.size[0])')
+  echo "  → actual widths after: $after" >> /tmp/resize-debug.log
 }
 
+echo "[$(date +%T.%N)] START dir=$DIRECTION layout=$LAYOUT" >> /tmp/resize-debug.log
+
 if [ "$LAYOUT" != "scrolling" ]; then
+  echo "  → non-scrolling fallback" >> /tmp/resize-debug.log
   resize_with_limits "$DIRECTION"
   exit 0
 fi
