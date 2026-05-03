@@ -146,6 +146,25 @@ systemctl --user enable --now thumbwheel-cycler.service
 success "thumbwheel-cycler.service enabled"
 info "Note: thumbwheel-cycler.py uses /dev/input/event6 — verify device path on this machine"
 
+# ── MX Brio virtual camera (flipped) ────────────────────────────────────────
+
+section "MX Brio flipped virtual camera"
+
+if ! pacman -Q v4l2loopback-dkms &>/dev/null; then
+  info "Installing v4l2loopback-dkms and linux-headers..."
+  sudo pacman -S --noconfirm linux-headers v4l2loopback-dkms
+fi
+
+sudo cp "$DOTFILES/etc/modprobe.d/v4l2loopback.conf" /etc/modprobe.d/v4l2loopback.conf
+sudo cp "$DOTFILES/etc/modules-load.d/v4l2loopback.conf" /etc/modules-load.d/v4l2loopback.conf
+sudo modprobe v4l2loopback
+success "v4l2loopback loaded → /dev/video10 (MX Brio Flipped)"
+
+rsync_cfg systemd/user/brio-flip.service
+systemctl --user daemon-reload
+systemctl --user enable --now brio-flip.service
+success "brio-flip.service enabled"
+
 # ── Reload live services ────────────────────────────────────────────────────
 
 if $LIVE; then

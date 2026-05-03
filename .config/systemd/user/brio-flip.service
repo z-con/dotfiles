@@ -1,0 +1,12 @@
+[Unit]
+Description=MX Brio horizontal flip virtual camera
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=ffmpeg -f v4l2 -input_format mjpeg -video_size 1920x1080 -framerate 30 -i /dev/v4l/by-id/usb-046d_MX_Brio_2547LV40UUS8-video-index0 -vf hflip -f v4l2 -pix_fmt yuv420p /dev/video10
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=graphical-session.target

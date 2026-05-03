@@ -39,6 +39,12 @@ rsync_cfg quickshell/hypr-overview/
 rsync_cfg systemd/user/sync-webapp-icons.service
 rsync_cfg systemd/user/sync-webapp-icons.path
 rsync_cfg systemd/user/thumbwheel-cycler.service
+rsync_cfg systemd/user/brio-flip.service
+
+# System-level configs (stored under etc/ in the repo)
+mkdir -p "$DOTFILES/etc/modprobe.d" "$DOTFILES/etc/modules-load.d"
+rsync -a /etc/modprobe.d/v4l2loopback.conf "$DOTFILES/etc/modprobe.d/v4l2loopback.conf"
+rsync -a /etc/modules-load.d/v4l2loopback.conf "$DOTFILES/etc/modules-load.d/v4l2loopback.conf"
 
 # Terminals
 rsync_cfg alacritty/
