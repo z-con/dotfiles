@@ -9,6 +9,10 @@
 DIRECTION="$1"
 AMOUNT=50
 
+# Prevent concurrent executions — rapid key repeat can cause limit overshooting
+exec 9>/tmp/resize-scroll.lock
+flock -n 9 || exit 0
+
 LAYOUT=$(hyprctl activeworkspace -j | jq -r '.tiledLayout')
 
 MON_JSON=$(hyprctl monitors -j | jq '.[] | select(.focused == true)')
@@ -36,6 +40,13 @@ resize_with_limits() {
 }
 
 if [ "$LAYOUT" != "scrolling" ]; then
+  resize_with_limits "$DIRECTION"
+  exit 0
+fi
+
+# Vertical resizing in scrolling layout: no shared horizontal divider exists between
+# side-by-side windows, so just resize the active window directly (no focus switching).
+if [ "$DIRECTION" = "up" ] || [ "$DIRECTION" = "down" ]; then
   resize_with_limits "$DIRECTION"
   exit 0
 fi
