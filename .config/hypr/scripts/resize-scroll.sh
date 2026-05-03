@@ -31,12 +31,46 @@ resize_with_limits() {
   win_w=$(echo "$win_json" | jq '.size[0]')
   win_h=$(echo "$win_json" | jq '.size[1]')
 
+  echo "  [rwl] dir=$1 w=$win_w h=$win_h MIN_W=$MIN_W MAX_W=$MAX_W MIN_H=$MIN_H MAX_H=$MAX_H" >> /tmp/resize-debug.log
+
   case "$1" in
-    left)  [ $((win_w - AMOUNT)) -ge $MIN_W ] && hyprctl dispatch resizeactive -${AMOUNT} 0 ;;
-    right) [ $((win_w + AMOUNT)) -le $MAX_W ] && hyprctl dispatch resizeactive ${AMOUNT} 0 ;;
-    up)    [ $((win_h - AMOUNT)) -ge $MIN_H ] && hyprctl dispatch resizeactive 0 -${AMOUNT} ;;
-    down)  [ $((win_h + AMOUNT)) -le $MAX_H ] && hyprctl dispatch resizeactive 0 ${AMOUNT} ;;
+    left)
+      if [ $((win_w - AMOUNT)) -ge $MIN_W ]; then
+        hyprctl dispatch resizeactive -${AMOUNT} 0
+        echo "  → resized left" >> /tmp/resize-debug.log
+      else
+        echo "  → BLOCKED left (would hit $((win_w - AMOUNT)) < $MIN_W)" >> /tmp/resize-debug.log
+      fi
+      ;;
+    right)
+      if [ $((win_w + AMOUNT)) -le $MAX_W ]; then
+        hyprctl dispatch resizeactive ${AMOUNT} 0
+        echo "  → resized right" >> /tmp/resize-debug.log
+      else
+        echo "  → BLOCKED right (would hit $((win_w + AMOUNT)) > $MAX_W)" >> /tmp/resize-debug.log
+      fi
+      ;;
+    up)
+      if [ $((win_h - AMOUNT)) -ge $MIN_H ]; then
+        hyprctl dispatch resizeactive 0 -${AMOUNT}
+        echo "  → resized up" >> /tmp/resize-debug.log
+      else
+        echo "  → BLOCKED up (would hit $((win_h - AMOUNT)) < $MIN_H)" >> /tmp/resize-debug.log
+      fi
+      ;;
+    down)
+      if [ $((win_h + AMOUNT)) -le $MAX_H ]; then
+        hyprctl dispatch resizeactive 0 ${AMOUNT}
+        echo "  → resized down" >> /tmp/resize-debug.log
+      else
+        echo "  → BLOCKED down (would hit $((win_h + AMOUNT)) > $MAX_H)" >> /tmp/resize-debug.log
+      fi
+      ;;
   esac
+
+  local after
+  after=$(hyprctl activewindow -j | jq '[.size[0], .size[1]]')
+  echo "  → active window after: $after" >> /tmp/resize-debug.log
 }
 
 # Move the divider between two windows: neither may drop below 25% of their combined size.
