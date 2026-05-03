@@ -31,12 +31,14 @@ rsync_cfg omarchy/ \
 # Dock
 rsync_cfg nwg-dock-hyprland/
 
-# hypr-overview
+# hypr-overview (config + QML source)
 rsync_cfg hypr-overview/
+rsync_cfg quickshell/hypr-overview/
 
 # Systemd user units (individual files, not the whole directory)
 rsync_cfg systemd/user/sync-webapp-icons.service
 rsync_cfg systemd/user/sync-webapp-icons.path
+rsync_cfg systemd/user/thumbwheel-cycler.service
 
 # Terminals
 rsync_cfg alacritty/
@@ -55,8 +57,23 @@ rsync_cfg btop/
 rsync_cfg fastfetch/
 rsync_cfg lazygit/
 
+# Editor
+rsync_cfg nvim/ --exclude='.git'
+
+# Git
+rsync_cfg git/
+
+# Audio / OSD
+rsync_cfg wiremix/
+rsync_cfg swayosd/
+
+# Environment
+rsync_cfg environment.d/
+
 # Local bin scripts
 rsync -a "$HOME/.local/bin/sync-webapp-icons" "$DOTFILES/scripts/sync-webapp-icons"
+rsync -a "$HOME/.local/bin/hypr-cycle-nowrap" "$DOTFILES/scripts/hypr-cycle-nowrap"
+rsync -a "$HOME/.local/bin/thumbwheel-cycler.py" "$DOTFILES/scripts/thumbwheel-cycler.py"
 
 cd "$DOTFILES"
 

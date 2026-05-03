@@ -81,6 +81,7 @@ rsync_cfg nwg-dock-hyprland/
 
 section "hypr-overview"
 rsync_cfg hypr-overview/
+rsync_cfg quickshell/hypr-overview/
 
 section "Omarchy"
 # Copy themes as plain directories (their .git dirs are not tracked here;
@@ -90,6 +91,21 @@ rsync_cfg omarchy/branding/
 rsync_cfg omarchy/extensions/
 rsync_cfg omarchy/hooks/
 rsync_cfg omarchy/themes/
+
+section "Editor (nvim)"
+rsync_cfg nvim/
+
+section "Git"
+rsync_cfg git/
+
+section "Audio"
+rsync_cfg wiremix/
+
+section "OSD"
+rsync_cfg swayosd/
+
+section "Environment"
+rsync_cfg environment.d/
 
 # ── Webapp icon sync ────────────────────────────────────────────────────────
 
@@ -112,6 +128,23 @@ success "sync-webapp-icons.path watcher enabled"
 if [[ -f "$HOME/.config/hypr-overview/config.json" ]]; then
   "$HOME/.local/bin/sync-webapp-icons" && success "webapp icon mappings synced"
 fi
+
+# ── MX Master input ─────────────────────────────────────────────────────────
+
+section "MX Master input"
+
+mkdir -p "$HOME/.local/bin"
+for script in hypr-cycle-nowrap thumbwheel-cycler.py; do
+  cp "$DOTFILES/scripts/$script" "$HOME/.local/bin/$script"
+  chmod +x "$HOME/.local/bin/$script"
+  success "$script installed"
+done
+
+rsync_cfg systemd/user/thumbwheel-cycler.service
+systemctl --user daemon-reload
+systemctl --user enable --now thumbwheel-cycler.service
+success "thumbwheel-cycler.service enabled"
+info "Note: thumbwheel-cycler.py uses /dev/input/event6 — verify device path on this machine"
 
 # ── Reload live services ────────────────────────────────────────────────────
 

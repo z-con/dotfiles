@@ -1,0 +1,9 @@
+[Unit]
+Description=MX Master thumb wheel window cycler
+
+[Service]
+ExecStart=/usr/bin/python3 %h/.local/bin/thumbwheel-cycler.py
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

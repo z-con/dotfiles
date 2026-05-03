@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+"""Usage: hypr-cycle-nowrap next|prev"""
+import sys, json, subprocess
+
+forward = sys.argv[1] == 'next'
+
+active = json.loads(subprocess.run(
+    ['hyprctl', 'activewindow', '-j'], capture_output=True, text=True).stdout)
+clients = json.loads(subprocess.run(
+    ['hyprctl', 'clients', '-j'], capture_output=True, text=True).stdout)
+
+ws_id = active.get('workspace', {}).get('id')
+windows = sorted(
+    [c for c in clients if c.get('workspace', {}).get('id') == ws_id],
+    key=lambda c: (c['at'][0], c['at'][1])
+)
+
+addrs = [w['address'] for w in windows]
+try:
+    idx = addrs.index(active.get('address'))
+except ValueError:
+    sys.exit(0)
+
+if forward and idx >= len(windows) - 1:
+    sys.exit(0)
+if not forward and idx <= 0:
+    sys.exit(0)
+
+if forward:
+    subprocess.run(['hyprctl', 'dispatch', 'cyclenext'])
+else:
+    subprocess.run(['hyprctl', 'dispatch', 'cyclenext', 'prev'])
