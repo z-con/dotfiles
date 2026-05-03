@@ -1,9 +1,7 @@
 #!/bin/bash
-# Resize windows in scrolling layout while keeping the screen-edge-adjacent side fixed.
-# When two windows are visible, CTRL+LEFT/RIGHT always moves the shared divider,
-# regardless of which window is focused.
-# Falls back to standard resizeactive behavior in dwindle/other layouts.
-# Limit: neither window may drop below 25% of the two windows' combined width (or height).
+# Resize tiled windows in dwindle layout.
+# Arrow keys move the shared divider; neither window in a pair may drop below
+# 25% of the pair's combined width (or height).
 
 DIRECTION="$1"
 AMOUNT=50
@@ -12,148 +10,110 @@ AMOUNT=50
 exec 9>/tmp/resize-scroll.lock
 flock -n 9 || exit 0
 
-LAYOUT=$(hyprctl activeworkspace -j | jq -r '.tiledLayout')
+WIN_JSON=$(hyprctl activewindow -j)
+WIN_X=$(echo "$WIN_JSON" | jq '.at[0]')
+WIN_Y=$(echo "$WIN_JSON" | jq '.at[1]')
+WIN_W=$(echo "$WIN_JSON" | jq '.size[0]')
+WIN_H=$(echo "$WIN_JSON" | jq '.size[1]')
+WS_ID=$(echo "$WIN_JSON" | jq '.workspace.id')
 
-MON_JSON=$(hyprctl monitors -j | jq '.[] | select(.focused == true)')
-MON_X=$(echo "$MON_JSON" | jq '.x')
-MON_W=$(echo "$MON_JSON" | jq '(.width / .scale) | floor')
-MON_H=$(echo "$MON_JSON" | jq '(.height / .scale) | floor')
+WINS=$(hyprctl clients -j | jq --argjson ws "$WS_ID" \
+  '[.[] | select(.workspace.id == $ws and .floating == false)]')
 
-# Fallback bounds for non-scrolling layout or single-window cases (1/4 of screen)
-MIN_W=$((MON_W / 4))
-MAX_W=$((MON_W * 3 / 4))
-MIN_H=$((MON_H / 4))
-MAX_H=$((MON_H * 3 / 4))
-
-resize_with_limits() {
-  local win_json win_w win_h
-  win_json=$(hyprctl activewindow -j)
-  win_w=$(echo "$win_json" | jq '.size[0]')
-  win_h=$(echo "$win_json" | jq '.size[1]')
-
-  echo "  [rwl] dir=$1 w=$win_w h=$win_h MIN_W=$MIN_W MAX_W=$MAX_W MIN_H=$MIN_H MAX_H=$MAX_H" >> /tmp/resize-debug.log
-
+# Find the size of the neighboring window in the given direction.
+# Uses a 20px tolerance to bridge borders and gaps.
+neighbor_w() {
   case "$1" in
     left)
-      if [ $((win_w - AMOUNT)) -ge $MIN_W ]; then
-        hyprctl dispatch resizeactive -${AMOUNT} 0
-        echo "  → resized left" >> /tmp/resize-debug.log
-      else
-        echo "  → BLOCKED left (would hit $((win_w - AMOUNT)) < $MIN_W)" >> /tmp/resize-debug.log
-      fi
+      echo "$WINS" | jq --argjson x "$WIN_X" \
+        '[.[] | select((.at[0] + .size[0]) >= ($x - 20) and (.at[0] + .size[0]) <= ($x + 20))]
+         | if length > 0 then .[0].size[0] else empty end'
       ;;
     right)
-      if [ $((win_w + AMOUNT)) -le $MAX_W ]; then
-        hyprctl dispatch resizeactive ${AMOUNT} 0
-        echo "  → resized right" >> /tmp/resize-debug.log
-      else
-        echo "  → BLOCKED right (would hit $((win_w + AMOUNT)) > $MAX_W)" >> /tmp/resize-debug.log
-      fi
+      echo "$WINS" | jq --argjson rx "$((WIN_X + WIN_W))" \
+        '[.[] | select(.at[0] >= ($rx - 20) and .at[0] <= ($rx + 20))]
+         | if length > 0 then .[0].size[0] else empty end'
       ;;
+  esac
+}
+
+neighbor_h() {
+  case "$1" in
     up)
-      if [ $((win_h - AMOUNT)) -ge $MIN_H ]; then
-        hyprctl dispatch resizeactive 0 -${AMOUNT}
-        echo "  → resized up" >> /tmp/resize-debug.log
-      else
-        echo "  → BLOCKED up (would hit $((win_h - AMOUNT)) < $MIN_H)" >> /tmp/resize-debug.log
-      fi
+      echo "$WINS" | jq --argjson y "$WIN_Y" \
+        '[.[] | select((.at[1] + .size[1]) >= ($y - 20) and (.at[1] + .size[1]) <= ($y + 20))]
+         | if length > 0 then .[0].size[1] else empty end'
       ;;
     down)
-      if [ $((win_h + AMOUNT)) -le $MAX_H ]; then
-        hyprctl dispatch resizeactive 0 ${AMOUNT}
-        echo "  → resized down" >> /tmp/resize-debug.log
-      else
-        echo "  → BLOCKED down (would hit $((win_h + AMOUNT)) > $MAX_H)" >> /tmp/resize-debug.log
-      fi
+      echo "$WINS" | jq --argjson by "$((WIN_Y + WIN_H))" \
+        '[.[] | select(.at[1] >= ($by - 20) and .at[1] <= ($by + 20))]
+         | if length > 0 then .[0].size[1] else empty end'
       ;;
   esac
-
-  local after
-  after=$(hyprctl activewindow -j | jq '[.size[0], .size[1]]')
-  echo "  → active window after: $after" >> /tmp/resize-debug.log
 }
 
-# Move the divider between two windows: neither may drop below 25% of their combined size.
-# The focused window must already be the left window. left_w and right_w are their current widths.
-resize_two_windows() {
-  local dir="$1" left_w="$2" right_w="$3"
-  local min_each=$(( (left_w + right_w) / 4 ))
-
-  echo "[$(date +%T.%N)] dir=$dir left=$left_w right=$right_w min=$min_each" >> /tmp/resize-debug.log
-
-  case "$dir" in
-    left)
-      if [ $((left_w - AMOUNT)) -ge $min_each ]; then
-        hyprctl dispatch resizeactive -${AMOUNT} 0
-        echo "  → resized (left shrink)" >> /tmp/resize-debug.log
-      else
-        echo "  → BLOCKED (left would hit $((left_w - AMOUNT)) < $min_each)" >> /tmp/resize-debug.log
-      fi
-      ;;
-    right)
-      if [ $((right_w - AMOUNT)) -ge $min_each ]; then
-        hyprctl dispatch resizeactive ${AMOUNT} 0
-        echo "  → resized (right shrink)" >> /tmp/resize-debug.log
-      else
-        echo "  → BLOCKED (right would hit $((right_w - AMOUNT)) < $min_each)" >> /tmp/resize-debug.log
-      fi
-      ;;
-  esac
-
-  # Log actual sizes after resize
-  local after
-  after=$(hyprctl clients -j | jq --argjson ws "$WS_ID" \
-    '[.[] | select(.workspace.id == $ws and .floating == false)] | sort_by(.at[0]) | map(.size[0])')
-  echo "  → actual widths after: $after" >> /tmp/resize-debug.log
+# Dispatch resize only if the window that will shrink stays >= 25% of the pair.
+# shrink_size: current size of the window about to shrink
+# other_size:  current size of its pair partner (empty = no neighbor, allow freely)
+check_and_resize() {
+  local shrink_size="$1" other_size="$2" dispatch="$3"
+  if [ -z "$other_size" ]; then
+    hyprctl dispatch $dispatch
+    return
+  fi
+  local combined=$((shrink_size + other_size))
+  [ $((shrink_size - AMOUNT)) -ge $((combined / 4)) ] && hyprctl dispatch $dispatch
 }
 
-echo "[$(date +%T.%N)] START dir=$DIRECTION layout=$LAYOUT" >> /tmp/resize-debug.log
+# In dwindle, resizeactive always moves the shared divider edge:
+#   left/right: horizontal divider moves left/right
+#   up/down:    vertical divider moves up/down
+# The window on the "near" side of that edge shrinks; the other grows.
+# We enforce 25% of the pair on the shrinking window only.
 
-if [ "$LAYOUT" != "scrolling" ]; then
-  echo "  → non-scrolling fallback" >> /tmp/resize-debug.log
-  resize_with_limits "$DIRECTION"
-  exit 0
-fi
-
-# Vertical resizing in scrolling layout: windows are side-by-side so there is no shared
-# horizontal divider — just resize the active window against the screen-height bound.
-if [ "$DIRECTION" = "up" ] || [ "$DIRECTION" = "down" ]; then
-  resize_with_limits "$DIRECTION"
-  exit 0
-fi
-
-WINDOW_JSON=$(hyprctl activewindow -j)
-WIN_X=$(echo "$WINDOW_JSON" | jq '.at[0]')
-WIN_W=$(echo "$WINDOW_JSON" | jq '.size[0]')
-WIN_ADDR=$(echo "$WINDOW_JSON" | jq -r '.address')
-WS_ID=$(echo "$WINDOW_JSON" | jq '.workspace.id')
-
-WIN_REL_X=$((WIN_X - MON_X))
-
-if [ "$WIN_REL_X" -le 20 ]; then
-  # On the left/only window — find right neighbor's width without changing focus
-  RIGHT_W=$(hyprctl clients -j | jq --argjson ws "$WS_ID" --argjson lx "$WIN_X" \
-    '[.[] | select(.workspace.id == $ws and .floating == false and .at[0] > $lx)]
-     | sort_by(.at[0])
-     | if length > 0 then .[0].size[0] else empty end')
-
-  if [ -z "$RIGHT_W" ]; then
-    resize_with_limits "$DIRECTION"
-  else
-    resize_two_windows "$DIRECTION" "$WIN_W" "$RIGHT_W"
-  fi
-else
-  # On the right window — control the divider by resizing the left neighbor
-  hyprctl dispatch movefocus l
-  LEFT_ADDR=$(hyprctl activewindow -j | jq -r '.address')
-
-  if [ "$LEFT_ADDR" != "$WIN_ADDR" ]; then
-    # WIN_W (captured before focus switch) is the right window's current width
-    LEFT_W=$(hyprctl activewindow -j | jq '.size[0]')
-    resize_two_windows "$DIRECTION" "$LEFT_W" "$WIN_W"
-    hyprctl dispatch focuswindow "address:${WIN_ADDR}"
-  else
-    # No left neighbor (shouldn't happen), fall back to direct resize
-    resize_with_limits "$DIRECTION"
-  fi
-fi
+case "$DIRECTION" in
+  left)
+    # Divider moves left → left window shrinks
+    LW=$(neighbor_w left)
+    if [ -n "$LW" ]; then
+      # Active is the right window; left neighbor shrinks
+      check_and_resize "$LW" "$WIN_W" "resizeactive -${AMOUNT} 0"
+    else
+      # Active is the left window; it shrinks itself
+      check_and_resize "$WIN_W" "$(neighbor_w right)" "resizeactive -${AMOUNT} 0"
+    fi
+    ;;
+  right)
+    # Divider moves right → right window shrinks
+    RW=$(neighbor_w right)
+    if [ -n "$RW" ]; then
+      # Active is the left window; right neighbor shrinks
+      check_and_resize "$RW" "$WIN_W" "resizeactive ${AMOUNT} 0"
+    else
+      # Active is the right window; it shrinks itself
+      check_and_resize "$WIN_W" "$(neighbor_w left)" "resizeactive ${AMOUNT} 0"
+    fi
+    ;;
+  up)
+    # Divider moves up → top window shrinks
+    TH=$(neighbor_h up)
+    if [ -n "$TH" ]; then
+      # Active is the bottom window; top neighbor shrinks
+      check_and_resize "$TH" "$WIN_H" "resizeactive 0 -${AMOUNT}"
+    else
+      # Active is the top window; it shrinks itself
+      check_and_resize "$WIN_H" "$(neighbor_h down)" "resizeactive 0 -${AMOUNT}"
+    fi
+    ;;
+  down)
+    # Divider moves down → bottom window shrinks
+    BH=$(neighbor_h down)
+    if [ -n "$BH" ]; then
+      # Active is the top window; bottom neighbor shrinks
+      check_and_resize "$BH" "$WIN_H" "resizeactive 0 ${AMOUNT}"
+    else
+      # Active is the bottom window; it shrinks itself
+      check_and_resize "$WIN_H" "$(neighbor_h up)" "resizeactive 0 ${AMOUNT}"
+    fi
+    ;;
+esac
