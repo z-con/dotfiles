@@ -1,0 +1,8 @@
+[Unit]
+Description=Watch for webapp .desktop file changes
+
+[Path]
+PathModified=%h/.local/share/applications
+
+[Install]
+WantedBy=default.target

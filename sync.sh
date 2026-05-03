@@ -31,6 +31,13 @@ rsync_cfg omarchy/ \
 # Dock
 rsync_cfg nwg-dock-hyprland/
 
+# hypr-overview
+rsync_cfg hypr-overview/
+
+# Systemd user units (individual files, not the whole directory)
+rsync_cfg systemd/user/sync-webapp-icons.service
+rsync_cfg systemd/user/sync-webapp-icons.path
+
 # Terminals
 rsync_cfg alacritty/
 rsync_cfg kitty/
@@ -47,6 +54,9 @@ rsync_cfg tmux/
 rsync_cfg btop/
 rsync_cfg fastfetch/
 rsync_cfg lazygit/
+
+# Local bin scripts
+rsync -a "$HOME/.local/bin/sync-webapp-icons" "$DOTFILES/scripts/sync-webapp-icons"
 
 cd "$DOTFILES"
 

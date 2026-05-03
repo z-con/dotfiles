@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""Sync webapp icon mappings from .desktop files into hypr-overview config.
+
+Runs automatically via sync-webapp-icons.path whenever ~/.local/share/applications/
+changes. Preserves manually-added (non-chrome-*) entries in iconMappings.
+"""
+
+import glob
+import json
+import os
+import subprocess
+
+APPS_DIR = os.path.expanduser("~/.local/share/applications")
+CONFIG_PATH = os.path.expanduser("~/.config/hypr-overview/config.json")
+
+
+def parse_desktop(path):
+    wm_class = icon = None
+    try:
+        with open(path) as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("StartupWMClass="):
+                    wm_class = line[15:]
+                elif line.startswith("Icon="):
+                    icon = line[5:]
+    except OSError:
+        pass
+    return wm_class, icon
+
+
+def main():
+    with open(CONFIG_PATH) as f:
+        config = json.load(f)
+
+    existing = config.get("iconMappings", {})
+    preserved = {k: v for k, v in existing.items() if not k.startswith("chrome-")}
+
+    webapp = {}
+    for path in sorted(glob.glob(os.path.join(APPS_DIR, "*.desktop"))):
+        wm_class, icon = parse_desktop(path)
+        if wm_class and wm_class.startswith("chrome-") and icon and icon.startswith("/"):
+            webapp[wm_class] = icon
+
+    config["iconMappings"] = {**preserved, **webapp}
+
+    with open(CONFIG_PATH, "w") as f:
+        json.dump(config, f, indent=4)
+        f.write("\n")
+
+    subprocess.run(["update-desktop-database", APPS_DIR], capture_output=True)
+
+    print(f"Synced {len(webapp)} webapp icon mappings")
+
+
+if __name__ == "__main__":
+    main()

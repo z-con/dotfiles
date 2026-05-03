@@ -1,0 +1,59 @@
+{
+    "overview": {
+        "rows": 2,
+        "columns": 5,
+        "scale": 0.18,
+        "orderRightLeft": false,
+        "orderBottomUp": false,
+        "centerIcons": true,
+        "showWorkspaceNumbers": true
+    },
+    "appearance": {
+        "backdropOpacity": 0.7,
+        "windowCornerRadius": 8,
+        "activeWorkspaceBorderWidth": 2,
+        "animationDuration": 200
+    },
+    "stashTrays": {
+        "enabled": true,
+        "trays": [
+            {
+                "name": "quick",
+                "label": "Quick Stash"
+            },
+            {
+                "name": "later",
+                "label": "For Later"
+            }
+        ],
+        "modifierKey": "Shift",
+        "secondaryModifier": "Control",
+        "showEmptyTrays": false,
+        "position": "bottom",
+        "previewScale": 0.12
+    },
+    "iconMappings": {
+        "net-runelite-client-RuneLite": "runelite",
+        "chrome-launchpad.37signals.com__-Default": "/home/zach/.local/share/applications/icons/Basecamp.png",
+        "chrome-chatgpt.com__-Default": "/home/zach/.local/share/applications/icons/ChatGPT.png",
+        "chrome-claude.com__-Default": "/home/zach/.local/share/applications/icons/Claude.png",
+        "chrome-discord.com__channels__me-Default": "/home/zach/.local/share/applications/icons/Discord.png",
+        "chrome-figma.com__-Default": "/home/zach/.local/share/applications/icons/Figma.png",
+        "chrome-app.fizzy.do__-Default": "/home/zach/.local/share/applications/icons/Fizzy.png",
+        "chrome-github.com__-Default": "/home/zach/.local/share/applications/icons/GitHub.png",
+        "chrome-mail.google.com__-Default": "/home/zach/.local/share/applications/icons/Gmail.png",
+        "chrome-calendar.google.com__-Default": "/home/zach/.local/share/applications/icons/Google Calendar.png",
+        "chrome-contacts.google.com__-Default": "/home/zach/.local/share/applications/icons/Google Contacts.png",
+        "chrome-maps.google.com__-Default": "/home/zach/.local/share/applications/icons/Google Maps.png",
+        "chrome-messages.google.com__web_conversations-Default": "/home/zach/.local/share/applications/icons/Google Messages.png",
+        "chrome-photos.google.com__-Default": "/home/zach/.local/share/applications/icons/Google Photos.png",
+        "chrome-app.hey.com__-Default": "/home/zach/.local/share/applications/icons/HEY.png",
+        "chrome-instagram.com__-Default": "/home/zach/.local/share/applications/icons/Instagram.png",
+        "chrome-linkedin.com__-Default": "/home/zach/.local/share/applications/icons/LinkedIn.png",
+        "chrome-web.whatsapp.com__-Default": "/home/zach/.local/share/applications/icons/WhatsApp.png",
+        "chrome-x.com__-Default": "/home/zach/.local/share/applications/icons/X.png",
+        "chrome-youtube.com__-Default": "/home/zach/.local/share/applications/icons/YouTube.png",
+        "chrome-music.youtube.com__-Default": "/home/zach/.local/share/applications/icons/Youtube Music.png",
+        "chrome-app.zoom.us__wc_home-Default": "/home/zach/.local/share/applications/icons/Zoom.png"
+    }
+}

@@ -1,0 +1,6 @@
+[Unit]
+Description=Sync webapp icon mappings into hypr-overview config
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/sync-webapp-icons

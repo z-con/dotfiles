@@ -76,6 +76,12 @@ rsync_cfg btop/
 rsync_cfg fastfetch/
 rsync_cfg lazygit/
 
+section "Dock"
+rsync_cfg nwg-dock-hyprland/
+
+section "hypr-overview"
+rsync_cfg hypr-overview/
+
 section "Omarchy"
 # Copy themes as plain directories (their .git dirs are not tracked here;
 # Omarchy manages the `current` symlink and `themed/` dir — leave those alone)
@@ -84,6 +90,28 @@ rsync_cfg omarchy/branding/
 rsync_cfg omarchy/extensions/
 rsync_cfg omarchy/hooks/
 rsync_cfg omarchy/themes/
+
+# ── Webapp icon sync ────────────────────────────────────────────────────────
+
+section "Webapp icon sync"
+
+# Install the sync script
+mkdir -p "$HOME/.local/bin"
+cp "$DOTFILES/scripts/sync-webapp-icons" "$HOME/.local/bin/sync-webapp-icons"
+chmod +x "$HOME/.local/bin/sync-webapp-icons"
+success "sync-webapp-icons script installed"
+
+# Install and enable the systemd path watcher
+rsync_cfg systemd/user/sync-webapp-icons.service
+rsync_cfg systemd/user/sync-webapp-icons.path
+systemctl --user daemon-reload
+systemctl --user enable --now sync-webapp-icons.path
+success "sync-webapp-icons.path watcher enabled"
+
+# Populate iconMappings from any already-installed webapps
+if [[ -f "$HOME/.config/hypr-overview/config.json" ]]; then
+  "$HOME/.local/bin/sync-webapp-icons" && success "webapp icon mappings synced"
+fi
 
 # ── Reload live services ────────────────────────────────────────────────────
 
