@@ -26,6 +26,13 @@ move_workspaces() {
   hyprctl dispatch workspace 6
   hyprctl dispatch workspace "$PREV_WS"
 
+  # Pin workspaces 6-10 to this monitor in Hyprland's rules so waybar reads the correct assignment.
+  # These rules are not in hyprland.conf to avoid them showing as unassigned persistent on eDP-1.
+  for ws in 6 7 8 9 10; do
+    hyprctl keyword workspace "$ws, monitor:$MONITOR, persistent:true" >/dev/null
+  done
+  log "pinned workspaces 6-10 to $MONITOR via keyword"
+
   # Restart waybar so it initializes with the correct workspace assignments
   touch "$MIGRATION_FLAG"
   log "restarting waybar post-migration"
