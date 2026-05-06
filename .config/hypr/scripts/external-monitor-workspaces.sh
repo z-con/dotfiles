@@ -1,6 +1,6 @@
 #!/bin/bash
 # When an external monitor is connected, move workspaces 6-10 to it.
-# When it's disconnected, Hyprland automatically moves those workspaces back to eDP-1.
+# When it's disconnected, reset workspaces 6-10 back to eDP-1.
 
 LOG=/tmp/ext-monitor-workspaces.log
 MIGRATION_FLAG=/tmp/workspace-migration-restarting-waybar
@@ -40,12 +40,36 @@ move_workspaces() {
   omarchy-restart-app waybar
 }
 
+restore_workspaces() {
+  log "monitor removed, restoring workspaces 6-10 to eDP-1"
+  sleep 1
+
+  for ws in 6 7 8 9 10; do
+    hyprctl keyword workspace "$ws, monitor:eDP-1, persistent:true" >/dev/null
+  done
+  log "reset workspaces 6-10 to eDP-1 via keyword"
+
+  for ws in 6 7 8 9 10; do
+    hyprctl dispatch moveworkspacetomonitor "$ws eDP-1" 2>/dev/null
+  done
+
+  touch "$MIGRATION_FLAG"
+  log "restarting waybar after monitor removal"
+  omarchy-restart-app waybar
+}
+
 handle() {
   if echo "$1" | grep -q "^monitoradded>>"; then
     MONITOR=${1#monitoradded>>}
     log "monitoradded event: '$MONITOR'"
     if [ "$MONITOR" != "eDP-1" ]; then
       move_workspaces "$MONITOR"
+    fi
+  elif echo "$1" | grep -q "^monitorremoved>>"; then
+    MONITOR=${1#monitorremoved>>}
+    log "monitorremoved event: '$MONITOR'"
+    if [ "$MONITOR" != "eDP-1" ]; then
+      restore_workspaces
     fi
   fi
 }

@@ -34,8 +34,7 @@
         "9": "9",
         "10": "0",
         "active": "󱓻"
-      },
-      "ignore-workspaces": ["6", "7", "8", "9", "10"]
+      }
     },
     "custom/omarchy": {
       "format": "󰣇 ",
