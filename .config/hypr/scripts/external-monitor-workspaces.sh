@@ -36,9 +36,33 @@ handle() {
   fi
 }
 
+get_external_monitor() {
+  hyprctl monitors -j | jq -r '.[].name' | grep -v "eDP-1" | head -1
+}
+
+# Re-migrate workspaces whenever waybar restarts (waybar restart doesn't fire monitoradded)
+watch_waybar_restarts() {
+  while true; do
+    # Wait for waybar to be running
+    while ! pgrep -x waybar >/dev/null 2>&1; do sleep 1; done
+    # Wait for it to die
+    while pgrep -x waybar >/dev/null 2>&1; do sleep 2; done
+    # Wait for it to come back
+    while ! pgrep -x waybar >/dev/null 2>&1; do sleep 1; done
+    sleep 2  # Let waybar fully initialize
+    EXTERNAL=$(get_external_monitor)
+    if [ -n "$EXTERNAL" ]; then
+      log "waybar restarted, re-migrating workspaces to $EXTERNAL"
+      move_workspaces "$EXTERNAL"
+    fi
+  done
+}
+
+watch_waybar_restarts &
+
 # Handle monitors already connected at startup (monitoradded fires before socat is ready)
 sleep 2
-EXISTING_MONITOR=$(hyprctl monitors -j | jq -r '.[].name' | grep -v "eDP-1" | head -1)
+EXISTING_MONITOR=$(get_external_monitor)
 if [ -n "$EXISTING_MONITOR" ]; then
   move_workspaces "$EXISTING_MONITOR"
 fi
