@@ -3,6 +3,7 @@
 # When it's disconnected, Hyprland automatically moves those workspaces back to eDP-1.
 
 LOG=/tmp/ext-monitor-workspaces.log
+MIGRATION_FLAG=/tmp/workspace-migration-restarting-waybar
 
 log() { echo "[$(date '+%H:%M:%S')] $*" >> "$LOG"; }
 
@@ -24,6 +25,11 @@ move_workspaces() {
   log "dispatching workspace 6"
   hyprctl dispatch workspace 6
   hyprctl dispatch workspace "$PREV_WS"
+
+  # Restart waybar so it initializes with the correct workspace assignments
+  touch "$MIGRATION_FLAG"
+  log "restarting waybar post-migration"
+  omarchy-restart-app waybar
 }
 
 handle() {
@@ -40,21 +46,27 @@ get_external_monitor() {
   hyprctl monitors -j | jq -r '.[].name' | grep -v "eDP-1" | head -1
 }
 
-# Re-migrate workspaces whenever waybar restarts (waybar restart doesn't fire monitoradded)
+# Re-migrate workspaces whenever waybar restarts (waybar restart doesn't fire monitoradded).
+# Uses PID tracking instead of die/come-back polling to catch fast restarts.
 watch_waybar_restarts() {
+  local LAST_PID=""
   while true; do
-    # Wait for waybar to be running
-    while ! pgrep -x waybar >/dev/null 2>&1; do sleep 1; done
-    # Wait for it to die
-    while pgrep -x waybar >/dev/null 2>&1; do sleep 2; done
-    # Wait for it to come back
-    while ! pgrep -x waybar >/dev/null 2>&1; do sleep 1; done
-    sleep 2  # Let waybar fully initialize
-    EXTERNAL=$(get_external_monitor)
-    if [ -n "$EXTERNAL" ]; then
-      log "waybar restarted, re-migrating workspaces to $EXTERNAL"
-      move_workspaces "$EXTERNAL"
+    CURRENT_PID=$(pgrep -x waybar | head -1)
+    if [ -n "$CURRENT_PID" ] && [ -n "$LAST_PID" ] && [ "$CURRENT_PID" != "$LAST_PID" ]; then
+      sleep 1.5  # Let waybar fully initialize
+      if [ -f "$MIGRATION_FLAG" ]; then
+        rm -f "$MIGRATION_FLAG"
+        log "waybar restart triggered by migration, skipping re-migration"
+      else
+        EXTERNAL=$(get_external_monitor)
+        if [ -n "$EXTERNAL" ]; then
+          log "waybar restarted by user, re-migrating workspaces to $EXTERNAL"
+          move_workspaces "$EXTERNAL"
+        fi
+      fi
     fi
+    [ -n "$CURRENT_PID" ] && LAST_PID="$CURRENT_PID"
+    sleep 1
   done
 }
 
