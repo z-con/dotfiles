@@ -44,18 +44,17 @@ restore_workspaces() {
   log "monitor removed, restoring workspaces 6-10 to eDP-1"
   sleep 1
 
+  # Drop the monitor pin so workspaces are persistent but not locked to DP-3.
+  # Hyprland already moved them to eDP-1 on disconnect; waybar already shows them.
+  # No waybar restart needed — restarting is what causes the incorrect revert.
   for ws in 6 7 8 9 10; do
-    hyprctl keyword workspace "$ws, monitor:eDP-1, persistent:true" >/dev/null
+    hyprctl keyword workspace "$ws, persistent:true" >/dev/null
   done
-  log "reset workspaces 6-10 to eDP-1 via keyword"
+  log "reset workspaces 6-10 to persistent (no monitor pin) via keyword"
 
   for ws in 6 7 8 9 10; do
     hyprctl dispatch moveworkspacetomonitor "$ws eDP-1" 2>/dev/null
   done
-
-  touch "$MIGRATION_FLAG"
-  log "restarting waybar after monitor removal"
-  omarchy-restart-app waybar
 }
 
 handle() {
