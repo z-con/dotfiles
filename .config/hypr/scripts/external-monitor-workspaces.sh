@@ -16,6 +16,14 @@ move_workspaces() {
   PREV_WS=$(hyprctl activeworkspace -j | jq '.id')
   log "PREV_WS=$PREV_WS"
 
+  # Pin workspaces 6-10 to the external monitor via Hyprland keyword rules.
+  # Done before moveworkspacetomonitor so Hyprland creates any non-existent workspaces on the right monitor.
+  # Not in hyprland.conf because unassigned persistent workspaces cause waybar to show them on eDP-1.
+  for ws in 6 7 8 9 10; do
+    hyprctl keyword workspace "$ws, monitor:$MONITOR, persistent:true" >/dev/null
+  done
+  log "pinned workspaces 6-10 to $MONITOR via keyword"
+
   for ws in 6 7 8 9 10; do
     RESULT=$(hyprctl dispatch moveworkspacetomonitor "$ws $MONITOR" 2>&1)
     log "moveworkspacetomonitor $ws $MONITOR -> $RESULT"
@@ -25,13 +33,6 @@ move_workspaces() {
   log "dispatching workspace 6"
   hyprctl dispatch workspace 6
   hyprctl dispatch workspace "$PREV_WS"
-
-  # Pin workspaces 6-10 to this monitor in Hyprland's rules so waybar reads the correct assignment.
-  # These rules are not in hyprland.conf to avoid them showing as unassigned persistent on eDP-1.
-  for ws in 6 7 8 9 10; do
-    hyprctl keyword workspace "$ws, monitor:$MONITOR, persistent:true" >/dev/null
-  done
-  log "pinned workspaces 6-10 to $MONITOR via keyword"
 
   # Restart waybar so it initializes with the correct workspace assignments
   touch "$MIGRATION_FLAG"
