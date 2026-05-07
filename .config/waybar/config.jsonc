@@ -19,7 +19,7 @@
     "on-click": "activate",
     "format": "{icon}",
     "format-icons": {
-      "default": "",
+      "default": "",
       "1": "1",
       "2": "2",
       "3": "3",
