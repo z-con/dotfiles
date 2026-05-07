@@ -52,6 +52,8 @@ rsync_cfg kitty/
 rsync_cfg ghostty/
 
 # Shell / prompt
+rsync -a "$HOME/.bashrc" "$DOTFILES/home/.bashrc"
+rsync -a "$HOME/.zshrc" "$DOTFILES/home/.zshrc"
 rsync_cfg fish/
 rsync_cfg starship.toml
 
