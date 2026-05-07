@@ -1,9 +1,8 @@
 #!/bin/bash
 # When an external monitor is connected, move workspaces 6-10 to it.
-# When it's disconnected, reset workspaces 6-10 back to eDP-1.
+# When it's disconnected, Hyprland automatically moves those workspaces back to eDP-1.
 
 LOG=/tmp/ext-monitor-workspaces.log
-MIGRATION_FLAG=/tmp/workspace-migration-restarting-waybar
 
 log() { echo "[$(date '+%H:%M:%S')] $*" >> "$LOG"; }
 
@@ -16,14 +15,6 @@ move_workspaces() {
   PREV_WS=$(hyprctl activeworkspace -j | jq '.id')
   log "PREV_WS=$PREV_WS"
 
-  # Pin workspaces 6-10 to the external monitor via Hyprland keyword rules.
-  # Done before moveworkspacetomonitor so Hyprland creates any non-existent workspaces on the right monitor.
-  # Not in hyprland.conf because unassigned persistent workspaces cause waybar to show them on eDP-1.
-  for ws in 6 7 8 9 10; do
-    hyprctl keyword workspace "$ws, monitor:$MONITOR, persistent:true" >/dev/null
-  done
-  log "pinned workspaces 6-10 to $MONITOR via keyword"
-
   for ws in 6 7 8 9 10; do
     RESULT=$(hyprctl dispatch moveworkspacetomonitor "$ws $MONITOR" 2>&1)
     log "moveworkspacetomonitor $ws $MONITOR -> $RESULT"
@@ -33,28 +24,6 @@ move_workspaces() {
   log "dispatching workspace 6"
   hyprctl dispatch workspace 6
   hyprctl dispatch workspace "$PREV_WS"
-
-  # Restart waybar so it initializes with the correct workspace assignments
-  touch "$MIGRATION_FLAG"
-  log "restarting waybar post-migration"
-  omarchy-restart-app waybar
-}
-
-restore_workspaces() {
-  log "monitor removed, restoring workspaces 6-10 to eDP-1"
-  sleep 1
-
-  # Drop the monitor pin so workspaces are persistent but not locked to DP-3.
-  # Hyprland already moved them to eDP-1 on disconnect; waybar already shows them.
-  # No waybar restart needed — restarting is what causes the incorrect revert.
-  for ws in 6 7 8 9 10; do
-    hyprctl keyword workspace "$ws, persistent:true" >/dev/null
-  done
-  log "reset workspaces 6-10 to persistent (no monitor pin) via keyword"
-
-  for ws in 6 7 8 9 10; do
-    hyprctl dispatch moveworkspacetomonitor "$ws eDP-1" 2>/dev/null
-  done
 }
 
 handle() {
@@ -64,48 +33,12 @@ handle() {
     if [ "$MONITOR" != "eDP-1" ]; then
       move_workspaces "$MONITOR"
     fi
-  elif echo "$1" | grep -q "^monitorremoved>>"; then
-    MONITOR=${1#monitorremoved>>}
-    log "monitorremoved event: '$MONITOR'"
-    if [ "$MONITOR" != "eDP-1" ]; then
-      restore_workspaces
-    fi
   fi
 }
 
-get_external_monitor() {
-  hyprctl monitors -j | jq -r '.[].name' | grep -v "eDP-1" | head -1
-}
-
-# Re-migrate workspaces whenever waybar restarts (waybar restart doesn't fire monitoradded).
-# Uses PID tracking instead of die/come-back polling to catch fast restarts.
-watch_waybar_restarts() {
-  local LAST_PID=""
-  while true; do
-    CURRENT_PID=$(pgrep -x waybar | head -1)
-    if [ -n "$CURRENT_PID" ] && [ -n "$LAST_PID" ] && [ "$CURRENT_PID" != "$LAST_PID" ]; then
-      sleep 1.5  # Let waybar fully initialize
-      if [ -f "$MIGRATION_FLAG" ]; then
-        rm -f "$MIGRATION_FLAG"
-        log "waybar restart triggered by migration, skipping re-migration"
-      else
-        EXTERNAL=$(get_external_monitor)
-        if [ -n "$EXTERNAL" ]; then
-          log "waybar restarted by user, re-migrating workspaces to $EXTERNAL"
-          move_workspaces "$EXTERNAL"
-        fi
-      fi
-    fi
-    [ -n "$CURRENT_PID" ] && LAST_PID="$CURRENT_PID"
-    sleep 1
-  done
-}
-
-watch_waybar_restarts &
-
 # Handle monitors already connected at startup (monitoradded fires before socat is ready)
 sleep 2
-EXISTING_MONITOR=$(get_external_monitor)
+EXISTING_MONITOR=$(hyprctl monitors -j | jq -r '.[].name' | grep -v "eDP-1" | head -1)
 if [ -n "$EXISTING_MONITOR" ]; then
   move_workspaces "$EXISTING_MONITOR"
 fi
