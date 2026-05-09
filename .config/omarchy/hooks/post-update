@@ -1,8 +1,12 @@
 #!/bin/bash
 
-# Remove 37signals webapp entries — not used
+# Remove unwanted webapp entries
 rm -f \
   ~/.local/share/applications/HEY.desktop \
   ~/.local/share/applications/Basecamp.desktop \
   ~/.local/share/applications/icons/HEY.png \
-  ~/.local/share/applications/icons/Basecamp.png
+  ~/.local/share/applications/icons/Basecamp.png \
+  ~/.local/share/applications/X.desktop \
+  ~/.local/share/applications/icons/X.png \
+  ~/.local/share/applications/ChatGPT.desktop \
+  ~/.local/share/applications/icons/ChatGPT.png
