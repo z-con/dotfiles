@@ -1,12 +1,12 @@
 #!/bin/bash
+BLOCKED="$HOME/.config/omarchy/blocked-webapps"
 
-# Remove unwanted webapp entries
-rm -f \
-  ~/.local/share/applications/HEY.desktop \
-  ~/.local/share/applications/Basecamp.desktop \
-  ~/.local/share/applications/icons/HEY.png \
-  ~/.local/share/applications/icons/Basecamp.png \
-  ~/.local/share/applications/X.desktop \
-  ~/.local/share/applications/icons/X.png \
-  ~/.local/share/applications/ChatGPT.desktop \
-  ~/.local/share/applications/icons/ChatGPT.png
+[[ -f "$BLOCKED" ]] || exit 0
+
+while IFS= read -r app; do
+  [[ -z "$app" ]] && continue
+  rm -f \
+    "$HOME/.local/share/applications/${app}.desktop" \
+    "$HOME/.local/share/applications/icons/${app}.png" \
+    "$HOME/.local/share/applications/icons/${app}.svg"
+done < "$BLOCKED"
