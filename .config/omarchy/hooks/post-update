@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Remove 37signals webapp entries — not used
+rm -f \
+  ~/.local/share/applications/HEY.desktop \
+  ~/.local/share/applications/Basecamp.desktop \
+  ~/.local/share/applications/icons/HEY.png \
+  ~/.local/share/applications/icons/Basecamp.png
