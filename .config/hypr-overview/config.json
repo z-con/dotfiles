@@ -34,6 +34,8 @@
     },
     "iconMappings": {
         "net-runelite-client-RuneLite": "runelite",
+        "chrome-launchpad.37signals.com__-Default": "/home/zach/.local/share/applications/icons/Basecamp.png",
+        "chrome-chatgpt.com__-Default": "/home/zach/.local/share/applications/icons/ChatGPT.png",
         "chrome-claude.com__-Default": "/home/zach/.local/share/applications/icons/Claude.png",
         "chrome-discord.com__channels__me-Default": "/home/zach/.local/share/applications/icons/Discord.png",
         "chrome-figma.com__-Default": "/home/zach/.local/share/applications/icons/Figma.png",
@@ -46,9 +48,11 @@
         "chrome-maps.google.com__-Default": "/home/zach/.local/share/applications/icons/Google Maps.png",
         "chrome-messages.google.com__web_conversations-Default": "/home/zach/.local/share/applications/icons/Google Messages.png",
         "chrome-photos.google.com__-Default": "/home/zach/.local/share/applications/icons/Google Photos.png",
+        "chrome-app.hey.com__-Default": "/home/zach/.local/share/applications/icons/HEY.png",
         "chrome-instagram.com__-Default": "/home/zach/.local/share/applications/icons/Instagram.png",
         "chrome-linkedin.com__-Default": "/home/zach/.local/share/applications/icons/LinkedIn.png",
         "chrome-web.whatsapp.com__-Default": "/home/zach/.local/share/applications/icons/WhatsApp.png",
+        "chrome-x.com__-Default": "/home/zach/.local/share/applications/icons/X.png",
         "chrome-youtube.com__-Default": "/home/zach/.local/share/applications/icons/YouTube.png",
         "chrome-music.youtube.com__-Default": "/home/zach/.local/share/applications/icons/Youtube Music.png",
         "chrome-app.zoom.us__wc_home-Default": "/home/zach/.local/share/applications/icons/Zoom.png"
