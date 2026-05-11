@@ -91,7 +91,22 @@ if git diff --quiet && git diff --staged --quiet && [[ -z "$(git ls-files --othe
 fi
 
 git add -A
-git commit -m "Update dotfiles [$(date '+%Y-%m-%d %H:%M')]"
+
+# Build a descriptive commit message from the staged files
+STAGED=$(git diff --staged --name-only)
+FILE_COUNT=$(printf '%s\n' "$STAGED" | grep -c '.')
+# Extract config area (e.g. "hypr", "waybar") — skip root-level files like sync.sh
+DIRS=$(printf '%s\n' "$STAGED" | sed 's|^\.config/||' | awk -F/ 'NF>1{print $1}' | sort -u | awk '{r=r (r?", ":"") $0} END{print r}')
+FILES=$(printf '%s\n' "$STAGED" | awk -F/ '{print $NF}' | sort -u | awk '{r=r (r?", ":"") $0} END{print r}')
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M')
+
+if [ "$FILE_COUNT" -le 5 ]; then
+  COMMIT_MSG="${DIRS}: update ${FILES} [${TIMESTAMP}]"
+else
+  COMMIT_MSG="dotfiles: update ${DIRS} (${FILE_COUNT} files) [${TIMESTAMP}]"
+fi
+
+git commit -m "$COMMIT_MSG"
 
 if git remote get-url origin &>/dev/null; then
   git push
