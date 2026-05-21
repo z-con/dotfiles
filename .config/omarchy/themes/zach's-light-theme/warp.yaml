@@ -1,0 +1,26 @@
+name: Aether Light
+accent: "#ff69b4"
+cursor: "#ff69b4"
+background: "#ffffff"
+foreground: "#1e0e30"
+details: lighter
+
+terminal_colors:
+  normal:
+    black:   "#ede8f8"
+    red:     "#c02040"
+    green:   "#1a8c64"
+    yellow:  "#b86000"
+    blue:    "#0878a8"
+    magenta: "#c63c8e"
+    cyan:    "#108a8a"
+    white:   "#1e0e30"
+  bright:
+    black:   "#8e8bb0"
+    red:     "#e04068"
+    green:   "#22bb88"
+    yellow:  "#d07800"
+    blue:    "#1898c8"
+    magenta: "#e848aa"
+    cyan:    "#18aab0"
+    white:   "#1e0e30"

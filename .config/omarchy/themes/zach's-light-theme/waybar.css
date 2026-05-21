@@ -1,0 +1,57 @@
+/*
+*      dMMMMMP dMP dMP dMMMMMP dMMMMb dMMMMMMP
+*     dMP     dMP dMP dMP     dMP dMP   dMP
+*    dMMMP   dMP dMP dMMMP   dMP dMP   dMP
+*   dMP      YMvAP" dMP     dMP dMP   dMP
+*  dMMMMMP    VP"  dMMMMMP dMP dMP   dMP
+*
+*      dMP dMP .aMMMb  dMMMMb  dMP dMMMMMP .aMMMb  dMMMMb
+*     dMP dMP dMP"dMP dMP.dMP amr   .dMP" dMP"dMP dMP dMP
+*    dMMMMMP dMP dMP dMMMMK" dMP  .dMP"  dMP dMP dMP dMP
+*   dMP dMP dMP.aMP dMP"AMF dMP .dMP"   dMP.aMP dMP dMP
+*  dMP dMP  VMMMP" dMP dMP dMP dMMMMMP  VMMMP" dMP dMP
+*
+*
+*/
+
+@define-color background #ffffff;
+@define-color foreground #1e0e30;
+@define-color accent #ff69b4;
+
+/* Base16 */
+@define-color base00 #ffffff;
+@define-color base01 #c02040;
+@define-color base02 #1a8c64;
+@define-color base03 #b86000;
+@define-color base04 #0878a8;
+@define-color base05 #c63c8e;
+@define-color base06 #108a8a;
+@define-color base07 #1e0e30;
+@define-color base08 #8e8bb0;
+@define-color base09 #e04068;
+@define-color base0A #22bb88;
+@define-color base0B #d07800;
+@define-color base0C #1898c8;
+@define-color base0D #e848aa;
+@define-color base0E #18aab0;
+/*
+* _______/\\\\\_______/\\\\\\____________/\\\__
+*   _____/\\\///\\\____\////\\\___________\/\\\__
+*    ___/\\\/__\///\\\_____\/\\\___________\/\\\__
+*     __/\\\______\//\\\____\/\\\___________\/\\\__
+*      _\/\\\_______\/\\\____\/\\\______/\\\\\\\\\__
+*       _\//\\\______/\\\_____\/\\\_____/\\\////\\\__
+*        __\///\\\__/\\\_______\/\\\____\/\\\__\/\\\__
+*         ____\///\\\\\/______/\\\\\\\\\_\//\\\\\\\/\\_
+*          ______\/////_______\/////////___\///////\//__
+*  ______/\\\\\\\\\\\________________/\\\_______________________/\\\______________________
+*   _____\/////\\\///________________\/\\\______________________\/\\\______________________
+*    _________\/\\\___________________\/\\\______________________\/\\\______________________
+*     _________\/\\\_________/\\\\\____\/\\\____________/\\\\\____\/\\\____________/\\\\\____
+*      _________\/\\\_______/\\\///\\\__\/\\\\\\\\\____/\\\///\\\__\/\\\\\\\\\____/\\\///\\\__
+*       _________\/\\\______/\\\__\//\\\_\/\\\////\\\__/\\\__\//\\\_\/\\\////\\\__/\\\__\//\\\_
+*        __/\\\___\/\\\_____\//\\\__/\\\__\/\\\__\/\\\_\//\\\__/\\\__\/\\\__\/\\\_\//\\\__/\\\__
+*         _\//\\\\\\\\\_______\///\\\\\/___\/\\\\\\\\\___\///\\\\\/___\/\\\\\\\\\___\///\\\\\/___
+*          __\/////////__________\/////_____\/////////______\/////_____\/////////______\/////_____
+*
+*/

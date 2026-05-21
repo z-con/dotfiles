@@ -1,0 +1,23 @@
+@define-color selected-text #ff69b4;
+@define-color text #1e0e30;
+@define-color base #ffffff;
+@define-color border #0878a8;
+@define-color foreground #1e0e30;
+@define-color background #ffffff;
+
+window {
+  background-color: transparent;
+  color: @text;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+window .box-wrapper {
+  border-radius: 16px;
+  border: 1px solid #4b0082;
+  padding: 18px 22px;
+  background: alpha(@base, 0.92);
+  background-clip: padding-box;
+  box-shadow: 2px 2px 18px rgba(0, 0, 0, 0.3);
+}
