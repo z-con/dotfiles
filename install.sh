@@ -92,6 +92,13 @@ rsync_cfg omarchy/extensions/
 rsync_cfg omarchy/hooks/
 rsync_cfg omarchy/themes/
 
+section "Active theme"
+if command -v omarchy &>/dev/null; then
+  omarchy theme set "zach's-dark-theme" && success "Theme set to zach's-dark-theme" || info "Theme switch failed — run: omarchy theme set \"zach's-dark-theme\""
+else
+  info "omarchy not found — run: omarchy theme set \"zach's-dark-theme\" after install"
+fi
+
 section "Editor (nvim)"
 rsync_cfg nvim/
 
@@ -188,5 +195,5 @@ else
 fi
 
 echo
-echo "To apply a specific theme, run: omarchy-theme <theme-name>"
-echo "Available themes in this repo: aetheria, city-783, event-horizon, zachs-theme"
+echo "To switch themes manually, run: omarchy theme set <theme-name>"
+echo "Available themes in this repo: aetheria, city-783, event-horizon, zach's-dark-theme, zach's-light-theme"
