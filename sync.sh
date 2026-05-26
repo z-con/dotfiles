@@ -42,9 +42,10 @@ rsync_cfg systemd/user/thumbwheel-cycler.service
 rsync_cfg systemd/user/brio-flip.service
 
 # System-level configs (stored under etc/ in the repo)
-mkdir -p "$DOTFILES/etc/modprobe.d" "$DOTFILES/etc/modules-load.d"
+mkdir -p "$DOTFILES/etc/modprobe.d" "$DOTFILES/etc/modules-load.d" "$DOTFILES/etc/systemd/system-sleep"
 rsync -a /etc/modprobe.d/v4l2loopback.conf "$DOTFILES/etc/modprobe.d/v4l2loopback.conf"
 rsync -a /etc/modules-load.d/v4l2loopback.conf "$DOTFILES/etc/modules-load.d/v4l2loopback.conf"
+rsync -a /etc/systemd/system-sleep/ish-accel-reload.sh "$DOTFILES/etc/systemd/system-sleep/ish-accel-reload.sh"
 
 # Terminals
 rsync_cfg alacritty/
