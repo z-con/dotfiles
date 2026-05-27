@@ -28,6 +28,9 @@ rsync_cfg omarchy/ \
   --exclude='backgrounds/*.jpeg' \
   --exclude='backgrounds/*.webp'
 
+# Elephant (walker data provider — menus, etc.)
+rsync_cfg elephant/
+
 # Dock
 rsync_cfg nwg-dock-hyprland/
 
