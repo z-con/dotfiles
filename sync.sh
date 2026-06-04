@@ -14,6 +14,13 @@ rsync_cfg() {
   rsync -a --delete "${@:2}" "$src" "$dst"
 }
 
+rsync_file() {
+  local src="$1" dst="$2"
+  [[ -e "$src" ]] || return 0
+  mkdir -p "$(dirname "$dst")"
+  rsync -a "$src" "$dst"
+}
+
 # Desktop / WM
 rsync_cfg hypr/
 rsync_cfg waybar/
@@ -45,10 +52,15 @@ rsync_cfg systemd/user/thumbwheel-cycler.service
 rsync_cfg systemd/user/brio-flip.service
 
 # System-level configs (stored under etc/ in the repo)
-mkdir -p "$DOTFILES/etc/modprobe.d" "$DOTFILES/etc/modules-load.d" "$DOTFILES/etc/systemd/system-sleep"
-rsync -a /etc/modprobe.d/v4l2loopback.conf "$DOTFILES/etc/modprobe.d/v4l2loopback.conf"
-rsync -a /etc/modules-load.d/v4l2loopback.conf "$DOTFILES/etc/modules-load.d/v4l2loopback.conf"
-rsync -a /etc/systemd/system-sleep/ish-accel-reload.sh "$DOTFILES/etc/systemd/system-sleep/ish-accel-reload.sh"
+rsync_etc() {
+  local src="/etc/$1" dst="$DOTFILES/etc/$1"
+  [[ -e "$src" ]] || return 0
+  mkdir -p "$(dirname "$dst")"
+  rsync -a "$src" "$dst"
+}
+rsync_etc modprobe.d/v4l2loopback.conf
+rsync_etc modules-load.d/v4l2loopback.conf
+rsync_etc systemd/system-sleep/ish-accel-reload.sh
 
 # Terminals
 rsync_cfg alacritty/
@@ -56,8 +68,8 @@ rsync_cfg kitty/
 rsync_cfg ghostty/
 
 # Shell / prompt
-rsync -a "$HOME/.bashrc" "$DOTFILES/home/.bashrc"
-rsync -a "$HOME/.zshrc" "$DOTFILES/home/.zshrc"
+rsync_file "$HOME/.bashrc" "$DOTFILES/home/.bashrc"
+rsync_file "$HOME/.zshrc" "$DOTFILES/home/.zshrc"
 rsync_cfg fish/
 rsync_cfg starship.toml
 
@@ -83,9 +95,9 @@ rsync_cfg swayosd/
 rsync_cfg environment.d/
 
 # Local bin scripts
-rsync -a "$HOME/.local/bin/sync-webapp-icons" "$DOTFILES/scripts/sync-webapp-icons"
-rsync -a "$HOME/.local/bin/hypr-cycle-nowrap" "$DOTFILES/scripts/hypr-cycle-nowrap"
-rsync -a "$HOME/.local/bin/thumbwheel-cycler.py" "$DOTFILES/scripts/thumbwheel-cycler.py"
+rsync_file "$HOME/.local/bin/sync-webapp-icons" "$DOTFILES/scripts/sync-webapp-icons"
+rsync_file "$HOME/.local/bin/hypr-cycle-nowrap" "$DOTFILES/scripts/hypr-cycle-nowrap"
+rsync_file "$HOME/.local/bin/thumbwheel-cycler.py" "$DOTFILES/scripts/thumbwheel-cycler.py"
 
 cd "$DOTFILES"
 
