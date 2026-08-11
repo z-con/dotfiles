@@ -35,7 +35,7 @@
     "iconMappings": {
         "net-runelite-client-RuneLite": "runelite",
         "chrome-claude.com__-Default": "/home/zach/.local/share/applications/icons/Claude.png",
-        "chrome-discord.com__channels_@me-Default": "/home/zach/.local/share/applications/icons/Discord.png",
+        "chrome-discord.com__channels__me-Default": "/home/zach/.local/share/applications/icons/Discord.png",
         "chrome-figma.com__-Default": "/home/zach/.local/share/applications/icons/Figma.png",
         "chrome-app.fizzy.do__-Default": "/home/zach/.local/share/applications/icons/Fizzy.png",
         "chrome-github.com__-Default": "/home/zach/.local/share/applications/icons/GitHub.png",
