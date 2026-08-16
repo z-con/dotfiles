@@ -3,7 +3,7 @@ import evdev
 import subprocess
 import time
 
-DEVICE_PATH = '/dev/input/event6'
+DEVICE_PATH = '/dev/input/by-id/usb-Logitech_USB_Receiver-if01-event-mouse'
 DEBOUNCE = 0.15  # seconds between window switches
 
 
