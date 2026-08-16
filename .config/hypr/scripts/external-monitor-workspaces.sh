@@ -16,14 +16,14 @@ move_workspaces() {
   log "PREV_WS=$PREV_WS"
 
   for ws in 6 7 8 9 10; do
-    RESULT=$(hyprctl dispatch moveworkspacetomonitor "$ws $MONITOR" 2>&1)
+    RESULT=$(hyprctl dispatch "hl.dsp.workspace.move({ workspace = \"$ws\", monitor = \"$MONITOR\" })" 2>&1)
     log "moveworkspacetomonitor $ws $MONITOR -> $RESULT"
   done
 
   sleep 0.5
   log "dispatching workspace 6"
-  hyprctl dispatch workspace 6
-  hyprctl dispatch workspace "$PREV_WS"
+  hyprctl dispatch 'hl.dsp.focus({ workspace = "6" })'
+  hyprctl dispatch "hl.dsp.focus({ workspace = \"$PREV_WS\" })"
 }
 
 handle() {

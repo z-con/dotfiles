@@ -27,3 +27,23 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- Prevent screensaver/idle when any window is fullscreen (e.g. video playback)
+hl.window_rule({ match = { fullscreen = true }, idle_inhibit = "fullscreen" })
+
+-- Pin workspaces to monitors
+-- Laptop screen: workspaces 1-5
+hl.workspace_rule({ workspace = "1", monitor = "eDP-1", default = true, persistent = true })
+hl.workspace_rule({ workspace = "2", monitor = "eDP-1", persistent = true })
+hl.workspace_rule({ workspace = "3", monitor = "eDP-1", persistent = true })
+hl.workspace_rule({ workspace = "4", monitor = "eDP-1", persistent = true })
+hl.workspace_rule({ workspace = "5", monitor = "eDP-1", persistent = true })
+-- External monitor: workspaces 6-10 (assigned dynamically by external-monitor-workspaces.sh)
+hl.workspace_rule({ workspace = "6", persistent = true })
+hl.workspace_rule({ workspace = "7", persistent = true })
+hl.workspace_rule({ workspace = "8", persistent = true })
+hl.workspace_rule({ workspace = "9", persistent = true })
+hl.workspace_rule({ workspace = "10", persistent = true })
+
+-- Blur behind the app launcher and lighten its dim
+hl.layer_rule({ match = { namespace = "walker" }, blur = true, ignore_alpha = 0.5 })

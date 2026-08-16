@@ -56,13 +56,14 @@ neighbor_h() {
 # shrink_size: current size of the window about to shrink
 # other_size:  current size of its pair partner (empty = no neighbor, allow freely)
 check_and_resize() {
-  local shrink_size="$1" other_size="$2" dispatch="$3"
+  local shrink_size="$1" other_size="$2" dx="$3" dy="$4"
+  local dispatcher="hl.dsp.window.resize({ x = $dx, y = $dy, relative = true })"
   if [ -z "$other_size" ]; then
-    hyprctl dispatch $dispatch
+    hyprctl dispatch "$dispatcher"
     return
   fi
   local combined=$((shrink_size + other_size))
-  [ $((shrink_size - AMOUNT)) -ge $((combined / 4)) ] && hyprctl dispatch $dispatch
+  [ $((shrink_size - AMOUNT)) -ge $((combined / 4)) ] && hyprctl dispatch "$dispatcher"
 }
 
 # In dwindle, resizeactive always moves the shared divider edge:
@@ -77,10 +78,10 @@ case "$DIRECTION" in
     LW=$(neighbor_w left)
     if [ -n "$LW" ]; then
       # Active is the right window; left neighbor shrinks
-      check_and_resize "$LW" "$WIN_W" "resizeactive -${AMOUNT} 0"
+      check_and_resize "$LW" "$WIN_W" "-${AMOUNT}" 0
     else
       # Active is the left window; it shrinks itself
-      check_and_resize "$WIN_W" "$(neighbor_w right)" "resizeactive -${AMOUNT} 0"
+      check_and_resize "$WIN_W" "$(neighbor_w right)" "-${AMOUNT}" 0
     fi
     ;;
   right)
@@ -88,10 +89,10 @@ case "$DIRECTION" in
     RW=$(neighbor_w right)
     if [ -n "$RW" ]; then
       # Active is the left window; right neighbor shrinks
-      check_and_resize "$RW" "$WIN_W" "resizeactive ${AMOUNT} 0"
+      check_and_resize "$RW" "$WIN_W" "${AMOUNT}" 0
     else
       # Active is the right window; it shrinks itself
-      check_and_resize "$WIN_W" "$(neighbor_w left)" "resizeactive ${AMOUNT} 0"
+      check_and_resize "$WIN_W" "$(neighbor_w left)" "${AMOUNT}" 0
     fi
     ;;
   up)
@@ -99,10 +100,10 @@ case "$DIRECTION" in
     TH=$(neighbor_h up)
     if [ -n "$TH" ]; then
       # Active is the bottom window; top neighbor shrinks
-      check_and_resize "$TH" "$WIN_H" "resizeactive 0 -${AMOUNT}"
+      check_and_resize "$TH" "$WIN_H" 0 "-${AMOUNT}"
     else
       # Active is the top window; it shrinks itself
-      check_and_resize "$WIN_H" "$(neighbor_h down)" "resizeactive 0 -${AMOUNT}"
+      check_and_resize "$WIN_H" "$(neighbor_h down)" 0 "-${AMOUNT}"
     fi
     ;;
   down)
@@ -110,10 +111,10 @@ case "$DIRECTION" in
     BH=$(neighbor_h down)
     if [ -n "$BH" ]; then
       # Active is the top window; bottom neighbor shrinks
-      check_and_resize "$BH" "$WIN_H" "resizeactive 0 ${AMOUNT}"
+      check_and_resize "$BH" "$WIN_H" 0 "${AMOUNT}"
     else
       # Active is the bottom window; it shrinks itself
-      check_and_resize "$WIN_H" "$(neighbor_h up)" "resizeactive 0 ${AMOUNT}"
+      check_and_resize "$WIN_H" "$(neighbor_h up)" 0 "${AMOUNT}"
     fi
     ;;
 esac

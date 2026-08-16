@@ -11,7 +11,7 @@ MIN=$(echo "$WORKSPACES" | jq '.[0]')
 MAX=$(echo "$WORKSPACES" | jq '.[-1]')
 
 if [[ "$DIRECTION" == "next" && $CURRENT -lt $MAX ]]; then
-    hyprctl dispatch workspace $((CURRENT + 1))
+    hyprctl dispatch "hl.dsp.focus({ workspace = \"$((CURRENT + 1))\" })"
 elif [[ "$DIRECTION" == "prev" && $CURRENT -gt $MIN ]]; then
-    hyprctl dispatch workspace $((CURRENT - 1))
+    hyprctl dispatch "hl.dsp.focus({ workspace = \"$((CURRENT - 1))\" })"
 fi
