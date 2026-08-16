@@ -27,6 +27,6 @@ if not forward and idx <= 0:
     sys.exit(0)
 
 if forward:
-    subprocess.run(['hyprctl', 'dispatch', 'cyclenext'])
+    subprocess.run(['hyprctl', 'dispatch', 'hl.dsp.window.cycle_next()'])
 else:
-    subprocess.run(['hyprctl', 'dispatch', 'cyclenext', 'prev'])
+    subprocess.run(['hyprctl', 'dispatch', 'hl.dsp.window.cycle_next({ next = false })'])

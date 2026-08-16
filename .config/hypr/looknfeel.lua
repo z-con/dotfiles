@@ -7,6 +7,13 @@ hl.config({
 
   decoration = {
     rounding = 15,
+
+    -- Off by default in quattro; needed so translucent surfaces (terminal
+    -- background-opacity, the walker launcher) blur what's behind them
+    -- instead of showing it through sharply.
+    blur = {
+      enabled = true,
+    },
   },
 })
 
