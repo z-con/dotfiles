@@ -2,7 +2,7 @@
 
 # Set GNOME accent color to match the theme's purple
 case "$1" in
-  zachs-theme)
+  "zach's-dark-theme")
     gsettings set org.gnome.desktop.interface accent-color 'purple'
     ;;
 esac
