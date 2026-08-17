@@ -25,9 +25,11 @@ hl.unbind("SUPER + L")
 -- Close all open windows
 o.bind("SUPER + ALT + W", "Close all windows", "omarchy-hyprland-window-close-all")
 
--- Overwrite existing binding, putting the app launcher on Super + Space
+-- Overwrite existing binding, putting the app launcher on Super + Space.
+-- walker itself is gone in quattro (replaced by the native omarchy-menu);
+-- "apps" is its closest route, normally on SUPER+ALT+SPACE by default.
 hl.unbind("SUPER + SPACE")
-o.bind("SUPER + SPACE", "Launch apps", "omarchy-launch-walker --width 300 --minheight 1 --maxheight 630")
+o.bind("SUPER + SPACE", "Launch apps", "omarchy-menu toggle apps")
 
 -- Logitech MX Master thumb buttons - workspace switching
 o.bind("mouse:275", "Previous workspace", "~/.config/hypr/scripts/workspace-scroll.sh prev")
