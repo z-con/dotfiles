@@ -66,6 +66,7 @@ rsync_etc systemd/system-sleep/ish-accel-reload.sh
 rsync_cfg alacritty/
 rsync_cfg kitty/
 rsync_cfg ghostty/
+rsync_cfg xdg-terminals.list
 
 # Shell / prompt
 rsync_file "$HOME/.bashrc" "$DOTFILES/home/.bashrc"
