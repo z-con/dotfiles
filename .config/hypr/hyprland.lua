@@ -47,3 +47,8 @@ hl.workspace_rule({ workspace = "10", persistent = true })
 
 -- Blur behind the app launcher and lighten its dim
 hl.layer_rule({ match = { namespace = "walker" }, blur = true, ignore_alpha = 0.5 })
+
+-- Give the coding agent terminal (org.omarchy.agent) a translucent, blurred
+-- look -- quattro's global default opacity (0.985/0.96) is too subtle for
+-- blur to read as anything.
+o.window("org.omarchy.agent", { opacity = "0.85 0.75" })
